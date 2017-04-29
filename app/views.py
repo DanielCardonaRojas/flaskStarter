@@ -1,63 +1,65 @@
-from flask import render_template, flash, redirect
-from flask import jsonify
-from app import app, celery
-from .forms import LoginForm
+# coding: utf-8
 
-from datetime import timedelta
+from app import app, db
 
-# from celery.decorator import periodic_task
+import os
+#flask related imports
+from flask import render_template, request, jsonify, send_from_directory, send_file, session, redirect, g
+import flask
+from flask_login import  login_required
+from jinja2 import Environment, FileSystemLoader, PackageLoader
 
-@app.route('/')
+from models import *
+
+# import requests, json
+
+import ConfigParser
+import logging
+
+# import custom_decorators
+# from custom_decorators import *
+
+################################### CONFIGS #####################################
+# Read print_processor.conf configuration file
+Config = ConfigParser.ConfigParser()
+Config.read("view.conf")
+
+logLevel = 10
+logPath = ""
+
+
+# CREATE LOGGER
+logger = logging.getLogger("garex")
+logger.setLevel(int(logLevel))
+logEfLevel = logger.getEffectiveLevel()
+filehandler = logging.FileHandler(os.path.join(logPath,'garex.log'),'a')
+formatter = logging.Formatter("%(asctime)s - %(levelname)s - %(message)s")
+filehandler.setFormatter(formatter)
+logger.addHandler(filehandler)
+
+logger.debug('Garex server: STARTED')
+
+# tracer = LogDecorator(logger)
+
+
+############################# REQUEST HANDLERS ############################
 @app.route('/index')
+@app.route('/')
 def index():
-    user = {'nickname': 'Daniel'}  # fake user
-    posts = [  # fake array of posts
-        { 
-            'author': {'nickname': 'DaNiel'}, 
-            'body': 'Beautiful day in Portland!' 
-        },
-        { 
-            'author': {'nickname': 'Emiliano'}, 
-            'body': 'The Avengers movie was so cool!' 
-        },
-        { 
-            'author': {'nickname': 'Coco'}, 
-            'body': 'Discovering new tooling' 
-        }
-    ]
-    return render_template("index.html",
-                           title='Home',
-                           user=user,
-                           posts=posts)
+	return render_template('index.html')
 
 
-@app.route('/login', methods=['GET', 'POST'])
-def login():
-    form = LoginForm()
-    if form.validate_on_submit():
-        flash('Login requested for OpenID="%s", remember_me=%s' %
-              (form.openid.data, str(form.remember_me.data)))
-        return redirect('/index')
-    return render_template('login.html', 
-                           title='Sign In',
-                           form=form)
 
-@app.route('/test', methods=['GET', 'POST'])
-def test():
-    res = add_task.delay(3,4)
-    print (res.ready())
-    return jsonify({"name":"Prueba", "passed":False})
+@app.route('/admin')
+@login_required
+def admin():
+
+	return render_template('admin.html')
 
 
-@celery.task()
-def add_task(x,y):
-    print ("adding values:  " + str(x) + " " +  str(y))
-    return (x + y)
 
-# @periodic_task(run_every=timedelta(seconds = 5))
-def say_hi(x,y):
-    print("Hi there!!")
-    return "Hola"
-
+@app.route('/info', methods= ['POST','GET'])
+def info():
+	return {"status":"ok", "data":{"name":"garex", "version": "0.0.1"}}
 
 

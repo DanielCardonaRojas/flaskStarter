@@ -1,7 +1,8 @@
-#!flask/bin/python
+#!venv/bin/python
 from app import app
 import subprocess
 
-# subprocess.Popen(["flask/bin/celery -A celery.app worker --app=app.celery --pidfile=/tmp/celery.pid --beat"], stdout=subprocess.PIPE, shell=True)
-subprocess.Popen(["flask/bin/celery -A app.celery worker --pidfile=/tmp/celery.pid --beat --concurrency=10"], stdout=subprocess.PIPE, shell=True)
-app.run(debug=True)
+if __name__ == '__main__':
+	# subprocess.Popen(["venv/bin/celery -A app.celery worker --pidfile=/tmp/celery.pid --beat --concurrency=10"], stdout=subprocess.PIPE, shell=True)
+	app.run(host='0.0.0.0', threaded=True, debug = True)
+

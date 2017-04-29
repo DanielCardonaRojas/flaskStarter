@@ -6,9 +6,6 @@ app = Flask(__name__)
 app.config.from_object('config')
 db = SQLAlchemy(app)
 
-# celery = Celery()
-# celery.config_from_object('celeryconfig')
-
 def make_celery(app):
     celery = Celery(app.import_name, broker=app.config['CELERY_BROKER_URL'])
     celery.conf.update(app.config)
@@ -22,13 +19,7 @@ def make_celery(app):
     return celery
 
 celery = make_celery(app)
-# celery.conf.celerybeat_schedule = {
-    # 'add-every-30-seconds': {
-        # 'task': 'tasks.someFunction',
-        # 'schedule': 5.0
-    # },
-# }
 
-from app import views, models
+from app import views, models, login
 import tasks
 

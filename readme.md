@@ -1,31 +1,62 @@
-# Getting Started With Flask (Mega Tutorial)
+# Flask Scaffold
 
-This is an attempt to get a basic scaffold for flask apps, it includes SQLAlchemy and Celery.
+Sets up a proyect for python2.7 with login functionality  and celery configuration ready. 
 
-Just note talking on Flask Mega Tutorial by Miguel.
-
-Download Python3 (with Brew)
+## Setup
 
 Create application folder and cd into it
 
-Create a virtual environment and install flask in it (python3)
+Create sqlite3 database
+
 ```shell
-python3 -m venv flask
+sqlite3 app.db
+#Or
+sqlite3
+#Then
+.open app.db
 ```
 
-To avoid the upgrade recomendation
-
-> flask/bin/pip install --upgrade pip
+Create a virtual environment and install flask in it
+```shell
+virtualenv venv
+```
 
 Run the app with `./run.py`
 
 
-[flask-wtf](https://flask-wtf.readthedocs.io/en/stable/) -> Forms
-flask-sqlalchemy -> ORM
+## Install dependencies
 
-###Cheatsheet
 
-source the virtual environment
+```shell
+pip install virtualenv
+virtualenv venv
+source venv/bin/activate
+pip install flask
+pip install flask-SQLAlchemy
+pip install flask-login
+pip install Celery
+```
+
+## Run migrations
+
+Create the users table from the User object model
+```shell
+cd app
+export FLASK_APP=$PWD/__init__.py
+echo $FLASK_APP
+flask shell
+```
+
+From shell
+```python
+form app import db
+#Run all migrations
+db.create_all()
+```
+
+## Cheatsheet
+
+Source the virtual environment
 ```shell
 source <venv_name>/bin/activate
 ```
@@ -36,16 +67,22 @@ pip freeze > requirements.txt
 pip install -r requirements.txt
 ```
 
+
+## Creating Users
+
+```shell
+#Create a user
+curl --data "user_name=admin&user_passwd=admin" http://localhost:5000/create_user
+curl --data "user_name=admin&user_passwd=admin&user_mail=dcardona@grupodyd.com" http://localhost:5000/create_user
+```
+
+
+## Celery Configuration
+
 Run celery with beat embeded in workers 
 ```shell
 celery -A app.celery worker --beat -E -l INFO
 ```
-
-
-#Using Celery
-
-Choose a broker
-====
 
 Install and run redis 
 
@@ -71,8 +108,30 @@ celery -A your_application.celery worker
 ```
 All celery flags can be found [here](http://docs.celeryproject.org/en/latest/genindex.html)
 
-Notes: 
+## Deployment with NGINX and uWSGI
 
-Had problems installing covarageo package
+```shell
+sudo apt-get install nginx
+sudo apt-get install uwsgi
+sudo apt-get install uwsgi-plugin-python
+```
+
+### Configure interactive repl for project
+
+```shell
+pip install flask-shell-bpython
+
+#START THE SHELL LIKE THIS
+export FLASK_APP=<path_to_your_project>/app/__init__.py
+flask shell
+#Then from the interactive shell
+from app.views import *
+from app.models import *
+```
 
 
+TODO:
+
+- Test Flask-migrate, flask-admin
+- Add logger to app
+- Manage log directories

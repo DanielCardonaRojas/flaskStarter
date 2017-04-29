@@ -1,2 +1,5 @@
 __pycache__/
-flask/
+venv/
+*.pyc
+*.db
+*.log

@@ -1,0 +1,19 @@
+{% extends "baseAdmin.html" %}
+{%macro render_sidebar_item(link='#', icon='glyphicon glyphicon-stats') %}
+<li>
+	<a href="{{link}}">
+		<i class="{{icon}}"></i>
+		{{ caller () }}
+	</a>
+</li>
+{% endmacro %}
+
+{% block sidebar%}
+<ul class="nav nav-sidebar">
+	{% call render_sidebar_item() %} Reportes {% endcall %}
+</ul>
+{% endblock %}
+
+{% block pagecontent %}
+<h1>Page Content </h1>
+{% endblock %}

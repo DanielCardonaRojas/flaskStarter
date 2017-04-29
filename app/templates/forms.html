@@ -1,0 +1,96 @@
+{# ********************** CAMPOS FORMULARIOS / VARIABLES / MACROS ***************** #}
+{% macro render_input(idTag,nameTag,labelTag, placeholder,defaultValue = None, type='text', hide=False
+					 , leftInputButton = None,  rightInputButton = None
+					 , maxLength = 100
+					 , leftInputIcon= None, leftInputAddon= None, rightInputIcon = None, rightInputAddon = None, inputGroupSize = "input-group-lg") 
+					 %}
+<div class="form-group " {%- if hide -%} style="display:none;" {% endif %}>
+		<label for="{{idTag}}" class="col-sm-2 control-label">{{ labelTag }}</label>
+		<div class="col-sm-10 ">
+		{% if leftInputIcon or rightInputIcon or leftInputAddon or rightInputAddon or leftInputButton or rightInputButton %}
+		<div class="input-group {{inputGroupSize}}">
+				{% if leftInputIcon %}
+				<span class="input-group-addon">
+					<i class="{{leftInputIcon}}"> </i>
+				</span>
+				{% endif %}
+				{% if leftInputButton %}
+				<div class="input-group-btn">
+					<button class="btn btn-default">{{leftInputButton}}</button>
+				</div>
+				{% endif %}
+				{% if leftInputAddon %}
+				<span class="input-group-addon">
+					{{leftInputAddon}}
+				</span>
+				{% endif %}
+				<input type="{{ type }}" class="form-control" name="{{nameTag}}" id="{{idTag}}" 
+					placeholder="{{placeholder}}" maxlength="{{maxLength}}" autocomplete="off">
+				{% if rightInputIcon %}
+				<span class="input-group-addon">
+					<i class="{{rightInputIcon}}"> </i>
+				</span>
+				{% endif %}
+				{% if rightInputButton %}
+				<div class="input-group-btn">
+					<button class="btn btn-default">{{rightInputButton}}</button>
+				</div>
+				{% endif %}
+				{% if rightInputAddon %}
+				<span class="input-group-addon">
+					{{rightInputAddon}}
+				</span>
+				{% endif %}
+			</div>
+			<label id="{{idTag}}-error" class="error validation-error" for="{{idTag}}"></label>
+		{% else %}
+		<input type="{{ type }}" class="form-control input-lg" name="{{nameTag}}" id="{{idTag}}" 
+			placeholder="{{placeholder}}" maxlength="{{maxLength}}" autocomplete="off" {%- if defaultValue -%} value="{{defaultValue}}" {% endif %}>
+		{% endif %}
+		</div>
+	</div>
+{% endmacro %}
+
+{% macro registration_fields(idTag,nameTag) %}
+	{{ render_input("input{{idTag}}ID","{{nameTag}}_doc", "Cédula", "Número de documento")}}
+	{{ render_input("input{{idTag}}TypeDoc","{{nameTag}}_typedoc", "Tipo de documento", "Tipo de documento", hide=True) }}
+	{{ render_input("input{{idTag}}Name","{{nameTag}}_name", "Nombre", "Nombre", hide=True) }}
+	{{ render_input("input{{idTag}}Method","{{nameTag}}_method", "Método de toma de documento", "Método de toma de documento", hide=True) }}
+	{{ caller ()}}
+{% endmacro %}
+
+{% macro render_fieldset(title, id, isLast = False, isSuccess = False, isFirst = False, icon = 'fa fa-user-circle', errorMessage = None, infoMessage = None) -%}
+<fieldset id="{{ id }}" class="{%- if isFirst -%}isFirst{%- elif isLast -%}isLast {% elif isSuccess %}isSuccess{% endif %}">
+	<div class="form-top">
+		<div class="form-top-left">
+			<h3>{{ title }}</h3>
+			<span class="info">{%- if infoMessage -%} {{infoMessage}}{% endif %}</span><br>
+			<span class="error">{%- if errorMessage -%} {{errorMessage}}{% endif %}</span>
+		</div>
+		<div class="form-top-right">
+			<!--<button id=clear-fields>-->
+				<!--<i class="fa fa-ban"></i>-->
+			<!--</button>-->
+			<i class="{{ icon }}"></i>
+		</div>
+	</div>
+	<div class="form-bottom">
+		{{ caller () }}
+		{% if not isSuccess %}
+		<div class="form-buttons">
+			{% if not isLast and not isSuccess %}
+			<button type="button" class="btn btn-erase">Borrar campo</button>
+			{% endif %}
+			{% if not isFirst %}
+			<button type="button" class="btn btn-previous">Anterior</button>
+			{% endif %}
+			{% if isLast %}
+			<button id="submit-button" type="submit" class="btn">Registrar e imprimir</button>
+			{% else %}
+			<button type="button" class="btn btn-next">Siguiente</button>
+			{% endif %}
+		</div>
+		{% endif %}
+	</div>
+</fieldset>
+{%- endmacro %}

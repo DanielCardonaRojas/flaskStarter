@@ -1,18 +1,19 @@
-<!-- extend base layout -->
 {% extends "base.html" %}
+{% import "forms.html" as forms %}
 
+<!-- ************* LOGIN  *********** -->
 {% block content %}
-  <h1>Sign In</h1>
-  <form action="" method="post" name="login">
-      {{ form.hidden_tag() }}
-      <p>
-          Please enter your OpenID:<br>
-          {{ form.openid(size=80) }}<br>
-          {% for error in form.openid.errors %}
-            <span style="color: red;">[{{ error }}]</span>
-          {% endfor %}<br>
-      </p>
-      <p>{{ form.remember_me }} Remember Me</p>
-      <p><input type="submit" value="Sign In"></p>
-  </form>
+<div id="content" class="container-fluid">
+	<div class="row">
+		<div class="col-sm-6 col-sm-offset-3 main">
+			<form action="" method="post">
+				{% call forms.render_fieldset('Login', 'login_fieldset', isSuccess = True, errorMessage =invalid_message) %}
+					{{ forms.render_input("userName","user_name", "Usuario", "Nombre de usuario", rightInputIcon="fa fa-id-badge")}}
+					{{ forms.render_input("userPasswd","user_passwd", "Contraseña", "Contraseña", rightInputIcon="fa fa-id-badge", type = "password")}}
+					<button id="submit-button" type="submit" class="btn btn-primary">Login</button>
+				{% endcall %}
+			</form>
+		</div>
+	</div>
+</div>
 {% endblock %}
